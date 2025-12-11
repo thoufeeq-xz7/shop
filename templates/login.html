@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h3>Sign in</h3>
+    <form method="post">
+      <div class="mb-3">
+        <label class="form-label">Name (optional)</label>
+        <input class="form-control" name="name" value="{{ request.form.name or '' }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Username or Email</label>
+        <input class="form-control" name="identifier" required value="{{ request.form.identifier or '' }}" placeholder="enter admin username or your email">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input class="form-control" name="password" type="password" required>
+      </div>
+      <button class="btn btn-primary">Sign in</button>
+      <a href="{{ url_for('index') }}" class="btn btn-link">Back to shop</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

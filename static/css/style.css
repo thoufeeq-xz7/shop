@@ -1,0 +1,300 @@
+/* styles.css — E-Commerce Flask App
+   Drop this file into static/css/styles.css
+   Works alongside Bootstrap (used in the templates)
+*/
+
+/* ---------- Base/layout ---------- */
+:root {
+    --brand: #0d6efd;
+    --muted: #6c757d;
+    --card-radius: 18px;
+    --shadow-soft: 0 6px 18px rgba(18, 38, 63, 0.08);
+  }
+  
+  body {
+    background: #232b33;
+    color: #126932;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    padding-bottom: 40px;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  
+/* ----------------------------
+   Base Styling (Desktop First)
+------------------------------*/
+
+body {
+  background: #f8fafc;
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Desktop container */
+.container {
+  max-width: 1180px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* Product Grid - Desktop */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+/* Product Card */
+.product-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* Card Image */
+.product-card img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+}
+
+/* Card Content */
+.product-info {
+  padding: 16px;
+}
+
+.product-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.product-price {
+  color: #0d6efd;
+  font-size: 1rem;
+  margin-top: 6px;
+}
+
+.btn-shop {
+  margin-top: 12px;
+  padding: 10px 15px;
+  width: 100%;
+  background: #0d6efd;
+  color: white;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-shop:hover {
+  background: #004ece;
+}
+
+
+/* =========================================
+   📱 MOBILE RESPONSIVE DESIGN (max-width: 768px)
+=============================================*/
+@media (max-width: 768px) {
+
+  body {
+    background: #ffffff;  /* Mobile cleaner look */
+  }
+
+  .container {
+    padding: 10px;       /* Reduce side spacing */
+  }
+
+  /* Single column layout */
+  .product-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  /* Mobile card */
+  .product-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.09);
+  }
+
+  .product-card img {
+    height: 180px;  /* Reduce image height for phones */
+  }
+
+  .product-title {
+    font-size: 1rem;
+  }
+
+  .product-price {
+    font-size: 0.95rem;
+  }
+
+  /* Make buttons larger for fingers */
+  .btn-shop {
+    padding: 14px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  /* Hide unnecessary desktop-only elements if needed */
+  .desktop-only {
+    display: none;
+  }
+}
+
+/* =========================================
+   💻 LARGE DESKTOP SCREENS (min-width: 1300px)
+=============================================*/
+@media (min-width: 1300px) {
+  .product-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .product-card img {
+    height: 260px;
+  }
+}
+
+
+  .container {
+    max-width: 1100px;
+  }
+  
+  /* Navbar */
+  .navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  .navbar {
+    box-shadow: 0 1px 0 rgba(28, 27, 27, 0.04);
+  }
+  
+  /* ---------- Cards & product grid ---------- */
+  .row .card {
+    border: none;
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-soft);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+    overflow: hidden;
+  }
+  
+  .row .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(255, 255, 255, 0.08);
+  }
+  
+  .card-img-top {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+  }
+  
+  /* Card body layout */
+  .card-body {
+    padding: 1rem;
+  }
+  .card-title {
+    font-size: 1.05rem;
+    margin-bottom: 0.35rem;
+  }
+  .card-text {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 0.65rem;
+  }
+  
+  /* Make description limited but accessible */
+  .card-text.text-truncate {
+    display: -webkit-box;
+    line-clamp: 3; /* standard property */
+    -webkit-line-clamp: 3; /* show up to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  /* Price */
+  .card .price {
+    font-weight: 700;
+    color: #111827;
+  }
+  
+  /* Buttons in cards */
+  .card .btn {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 8px;
+  }
+  
+  /* ---------- Admin styles ---------- */
+  .admin-panel {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow-soft);
+  }
+  .admin-actions {
+    display:flex;
+    gap: 0.5rem;
+  }
+  
+  /* Admin dashboard table image */
+  .admin-table-img {
+    max-width: 96px;
+    max-height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(12, 37, 75, 0.06);
+  }
+  
+  /* Upload preview block (used optionally) */
+  .upload-preview {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding: 8px;
+    border-radius: 8px;
+    background: #fbfdff;
+    border: 1px dashed rgba(13,110,253,0.08);
+  }
+  .upload-preview img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 6px 14px rgba(13,38,63,0.06);
+  }
+  
+  /* ---------- Forms & inputs ---------- */
+  .form-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  input[type="file"] {
+    padding: 6px 0;
+  }
+  
+  /* Flash messages */
+  .alert {
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(13,38,63,0.04);
+  }
+  
+  /* Utility */
+  .text-muted-small {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  
+  /* ---------- Responsive tweaks ---------- */
+  @media (max-width: 767px) {
+    .card-img-top { height: 180px; }
+    .container { padding-left: 12px; padding-right: 12px; }
+  }

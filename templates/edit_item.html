@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Edit Item{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="admin-panel">
+      <h3 class="mb-4">Edit Item</h3>
+      <form method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input class="form-control" name="name" value="{{ item.name }}" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" rows="3">{{ item.description }}</textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Price</label>
+              <input class="form-control" name="price" type="number" min="0" step="0.01" value="{{ item.price }}" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              <input class="form-control" name="category" value="{{ item.category }}" required>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Available Sizes <span class="text-muted-small">(comma separated)</span></label>
+          <input class="form-control" name="sizes" value="{{ item.sizes|join(', ') }}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Replace Image</label>
+          <input class="form-control" type="file" name="image" accept=".png,.jpg,.jpeg,.gif">
+          <div class="form-text text-muted-small">Leave empty to keep current image.</div>
+        </div>
+        {% if item.image %}
+        <div class="upload-preview mb-3">
+          <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" alt="Current image">
+          <div>
+            <strong>Current image</strong>
+            <div class="text-muted-small">{{ item.image }}</div>
+          </div>
+        </div>
+        {% endif %}
+        <div class="d-flex justify-content-between">
+          <a class="btn btn-link" href="{{ url_for('admin_dashboard') }}">Cancel</a>
+          <button class="btn btn-primary">Update Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

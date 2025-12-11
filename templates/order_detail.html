@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block title %}Order {{ order.id or order['id'] }} Details{% endblock %}
+
+{% block content %}
+{# --- normalize objects safely --- #}
+{% set order_obj = order %}
+{% set cust = order_obj.get('customer') if order_obj.get('customer') is not none else (order_obj.customer if order_obj is not mapping and order_obj.customer is defined else {}) %}
+{% set billing = order_obj.get('billing') if order_obj.get('billing') is not none else order_obj.get('billing_address', {}) %}
+{% set shipping = order_obj.get('shipping') if order_obj.get('shipping') is not none else order_obj.get('shipping_address', {}) %}
+{% set payment = order_obj.get('payment') if order_obj.get('payment') is not none else {} %}
+{% set items = order_obj.get('items') if order_obj.get('items') is not none else [] %}
+
+<h3 class="mb-3">Order #{{ order_obj.id or order_obj['id'] }}</h3>
+
+<div class="row g-3">
+  <!-- LEFT: Customer + Addresses -->
+  <div class="col-lg-6">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Customer Information</h5>
+        <p class="mb-1"><strong>Name:</strong> {{ cust.name or cust.get('name','—') }}</p>
+        <p class="mb-1">
+          <strong>Email:</strong>
+          {% if (cust.email or cust.get('email')) %}
+            <a href="mailto:{{ cust.email or cust.get('email') }}">{{ cust.email or cust.get('email') }}</a>
+          {% else %}
+            — 
+          {% endif %}
+        </p>
+        <p class="mb-1"><strong>Phone:</strong> {{ cust.phone or cust.get('phone') or '—' }}</p>
+        {% if cust.notes or cust.get('notes') %}
+          <p class="mb-0"><strong>Notes:</strong> {{ cust.notes or cust.get('notes') }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Billing Card -->
+      <div class="col-md-6">
+        <div class="card mb-3 h-100">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Billing Address</h6>
+
+            {% if billing and (billing.get('line1') or billing.get('city') or billing.get('name')) %}
+              <p class="mb-0">
+                {{ billing.name or billing.get('name','') }}{% if billing.get('name') %}<br>{% endif %}
+                {{ billing.line1 or billing.get('line1','') }}
+                {% if billing.line2 or billing.get('line2') %}<br>{{ billing.line2 or billing.get('line2') }}{% endif %}<br>
+                {{ billing.city or billing.get('city','') }}{% if billing.get('state') or billing.get('state') %}, {{ billing.state or billing.get('state') }}{% endif %}<br>
+                {{ billing.postcode or billing.get('postcode','') }}<br>
+                {{ billing.country or billing.get('country','') }}
+              </p>
+              {% if billing.get('phone') %}
+                <p class="mb-0"><strong>Phone:</strong> {{ billing.phone or billing.get('phone') }}</p>
+              {% endif %}
+            {% else %}
+              {# fallback to single-line address stored under customer #}
+              <p class="mb-0">{{ cust.address or cust.get('address','—') }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping Card -->
+      <div class="col-md-6">
+        <div class="card mb-3 h-100">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Shipping Address</h6>
+
+            {% if shipping and (shipping.get('line1') or shipping.get('city') or shipping.get('name')) %}
+              <p class="mb-0">
+                {{ shipping.name or shipping.get('name','') }}{% if shipping.get('name') %}<br>{% endif %}
+                {{ shipping.line1 or shipping.get('line1','') }}
+                {% if shipping.line2 or shipping.get('line2') %}<br>{{ shipping.line2 or shipping.get('line2') }}{% endif %}<br>
+                {{ shipping.city or shipping.get('city','') }}{% if shipping.get('state') or shipping.get('state') %}, {{ shipping.state or shipping.get('state') }}{% endif %}<br>
+                {{ shipping.postcode or shipping.get('postcode','') }}<br>
+                {{ shipping.country or shipping.get('country','') }}
+              </p>
+              {% if shipping.get('phone') %}
+                <p class="mb-0"><strong>Phone:</strong> {{ shipping.phone or shipping.get('phone') }}</p>
+              {% endif %}
+            {% else %}
+              {# fallback to single-line address stored under customer #}
+              <p class="mb-0">{{ cust.address or cust.get('address','—') }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Order summary & payment -->
+  <div class="col-lg-6">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Order Summary</h5>
+        <p class="mb-1"><strong>Order ID:</strong> {{ order_obj.id or order_obj['id'] }}</p>
+        <p class="mb-1"><strong>Status:</strong> <span class="badge bg-info text-dark">{{ order_obj.status or order_obj.get('status','') }}</span></p>
+        <p class="mb-1"><strong>Placed on:</strong> {{ order_obj.created_at or order_obj.get('created_at','') }}</p>
+        <p class="mb-1"><strong>Subtotal:</strong> ₹{{ order_obj.subtotal or order_obj.get('subtotal')|default(order_obj.total or order_obj.get('total',0)) }}</p>
+        {% if order_obj.shipping_cost or order_obj.get('shipping_cost') %}
+          <p class="mb-1"><strong>Shipping:</strong> ₹{{ order_obj.shipping_cost or order_obj.get('shipping_cost') }}</p>
+        {% endif %}
+        {% if order_obj.discount or order_obj.get('discount') %}
+          <p class="mb-1"><strong>Discount:</strong> -₹{{ order_obj.discount or order_obj.get('discount') }}</p>
+        {% endif %}
+        <p class="mb-0"><strong>Total:</strong> <span class="fs-5">₹{{ order_obj.total or order_obj.get('total',0) }}</span></p>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted">Payment Information</h6>
+        <p class="mb-1"><strong>Method:</strong> {{ payment.method or payment.get('method','—') }}</p>
+        <p class="mb-1"><strong>Payment Status:</strong> {{ payment.status or payment.get('status','—') }}</p>
+        {% if payment.transaction_id or payment.get('transaction_id') %}
+          <p class="mb-1"><strong>Transaction ID:</strong> {{ payment.transaction_id or payment.get('transaction_id') }}</p>
+        {% endif %}
+        {% if payment.provider or payment.get('provider') %}
+          <p class="mb-0"><strong>Provider:</strong> {{ payment.provider or payment.get('provider') }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if order_obj.metadata or order_obj.get('metadata') %}
+      <div class="card mb-3">
+        <div class="card-body">
+          <h6 class="card-subtitle mb-2 text-muted">Additional Info</h6>
+          <pre class="small mb-0">{{ order_obj.metadata or order_obj.get('metadata') }}</pre>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<hr class="my-4">
+
+<h4>Items in this order</h4>
+<div class="table-responsive">
+  <table class="table table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>SKU</th>
+        <th>Size</th>
+        <th class="text-center">Qty</th>
+        <th class="text-end">Unit Price</th>
+        <th class="text-end">Line Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if items %}
+        {% for it in items %}
+        <tr>
+          <td>
+            <div><strong>{{ it.name or it['name'] }}</strong></div>
+            {% if it.description or it.get('description') %}<div class="text-muted small">{{ it.description or it.get('description') }}</div>{% endif %}
+          </td>
+          <td>{{ it.sku or it.get('sku','—') }}</td>
+          <td>{{ it.size or it.get('size','-') }}</td>
+          <td class="text-center">{{ it.quantity or it.get('quantity', it.get('qty',1)) }}</td>
+          <td class="text-end">₹{{ it.price or it.get('price', '0') }}</td>
+          <td class="text-end">₹{{ ((it.quantity or it.get('quantity',1)) * (it.price|float if it.price is defined else (it.get('price')|float if it.get('price') is defined else 0))) | round(2, 'common') }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="6" class="text-center text-muted">No items recorded for this order.</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+  <a href="{{ url_for('recent_orders') }}" class="btn btn-outline-secondary">Back to Orders</a>
+  <a href="{{ url_for('index') }}" class="btn btn-primary">Continue shopping</a>
+</div>
+
+{% endblock %}

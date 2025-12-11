@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Upload Item{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="admin-panel">
+      <h3 class="mb-4">Upload Item</h3>
+      <form method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input class="form-control" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" name="description" rows="3"></textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Price</label>
+              <input class="form-control" name="price" type="number" min="0" step="0.01" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              <select class="form-control" name="category" required>
+                <option value="">Choose…</option>
+                <option value="electronics">Electronics</option>
+                <option value="clothing">Clothing</option>
+                <option value="books">Books</option>
+                <option value="wearables">Wearables</option>
+                <option value="bags">Bags</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Available Sizes <span class="text-muted-small">(comma separated)</span></label>
+          <input class="form-control" name="sizes" placeholder="e.g. S, M, L, XL">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Product Image (optional)</label>
+          <input class="form-control" type="file" name="image" accept=".png,.jpg,.jpeg,.gif">
+          <div class="form-text text-muted-small">Max 4MB. PNG/JPG/GIF.</div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <a class="btn btn-link" href="{{ url_for('admin_dashboard') }}">Back</a>
+          <button class="btn btn-primary">Save Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

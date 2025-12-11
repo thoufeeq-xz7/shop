@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="admin-panel">
+      <h4 class="mb-3">Customer Information</h4>
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input class="form-control" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Phone number</label>
+          <input class="form-control" name="phone" type="tel" required>
+        </div>
+         <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input class="form-control" name="email" type="email" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Shipping Address</label>
+          <textarea class="form-control" name="address" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Notes (optional)</label>
+          <textarea class="form-control" name="notes" rows="2"></textarea>
+        </div>
+        <div class="d-flex justify-content-between">
+          <a class="btn btn-link" href="{{ url_for('view_cart') }}">Back to Cart</a>
+          <button class="btn btn-primary">Place Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="admin-panel">
+      <h5>Order Summary</h5>
+      <ul class="list-group list-group-flush mb-3">
+        {% for item in cart %}
+        <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div>
+            <div>{{ item.name }}</div>
+            <small class="text-muted">Qty {{ item.quantity }}{% if item.size %} • Size {{ item.size }}{% endif %}</small>
+          </div>
+          <div>₹{{ '%.2f'|format(item.price|float * item.quantity) }}</div>
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="d-flex justify-content-between">
+        <strong>Total</strong>
+        <strong>₹{{ '%.2f'|format(summary.total) }}</strong>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,58 @@
+[
+  {
+    "id": "3ea4f641",
+    "name": "hoodiees",
+    "description": "",
+    "price": "599.00",
+    "category": "clothing",
+    "sizes": [
+      "xl",
+      "xxl",
+      "m",
+      "s"
+    ],
+    "image": "3d79170f20184fef9b385728ac56c6f5_Blue-white_hoody.jpg"
+  },
+  {
+    "id": "7e1da0df",
+    "name": "hoodiees",
+    "description": "breathable and lasing",
+    "price": "499.00",
+    "category": "clothing",
+    "sizes": [
+      "xl",
+      "xxl",
+      "m",
+      "s"
+    ],
+    "image": "b58f8a51657e4cfab5c6458dfd9962a7_Hoodie_of_a_light.jpg"
+  },
+  {
+    "id": "9677c662",
+    "name": "t shirt",
+    "description": "breathable",
+    "price": "490.00",
+    "category": "clothing",
+    "sizes": [
+      "xl",
+      "xxl",
+      "m",
+      "s"
+    ],
+    "image": "3d6b3638e8f34e0fbd8cd6428a3e40c3_Raido_T-Shirt_Black_-_Studio_Innate.jpg"
+  },
+  {
+    "id": "ddc1a13a",
+    "name": "t shirt",
+    "description": "durable",
+    "price": "499.00",
+    "category": "clothing",
+    "sizes": [
+      "xl",
+      "xxl",
+      "m",
+      "s"
+    ],
+    "image": "34e9f143c37841aeb2f1f69126a21144_Follow_for_more_.jpg"
+  }
+]

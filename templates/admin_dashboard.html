@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h3 class="mb-0">Admin Dashboard</h3>
+    <div class="text-muted-small">Manage products and orders</div>
+  </div>
+  <div>
+    <a href="{{ url_for('upload_item') }}" class="btn btn-success me-2">Upload Item</a>
+    <a href="{{ url_for('recent_orders') }}" class="btn btn-outline-primary me-2"> Orders</a>
+    <a href="{{ url_for('admin_logout') }}" class="btn btn-secondary">Logout</a>
+  </div>
+</div>
+
+<!-- Products table -->
+<div class="card mb-4">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th class="d-none d-md-table-cell">Price</th>
+            <th class="d-none d-lg-table-cell">Category</th>
+            <th class="d-none d-md-table-cell">Sizes</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for it in items %}
+          <tr>
+            <td style="width:120px;">
+              {% if it.image %}
+                <img src="{{ url_for('static', filename='uploads/' ~ it.image) }}" alt="img" style="max-width:100px; max-height:70px; object-fit:cover;">
+              {% endif %}
+            </td>
+            <td>{{ it.name }}</td>
+            <td class="d-none d-md-table-cell">₹{{ it.price }}</td>
+            <td class="d-none d-lg-table-cell">{{ it.category }}</td>
+            <td class="d-none d-md-table-cell">
+              {% if it.sizes %}
+                <span class="badge bg-light text-dark">{{ it.sizes | join(', ') }}</span>
+              {% else %}
+                <span class="text-muted small">—</span>
+              {% endif %}
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('edit_item', item_id=it.id) }}" class="btn btn-sm btn-outline-primary me-1">Edit</a>
+              <form method="post" action="{{ url_for('delete_item', item_id=it.id) }}" style="display:inline;" onsubmit="return confirm('Delete this item?');">
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="text-center">No items yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Orders -->
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="mb-0">Recent Orders</h5>
+      <div class="text-muted-small">Update status or delete orders</div>
+    </div>
+
+    {% if orders %}
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Total</th>
+              <th>Placed</th>
+              <th>Status</th>
+              <th>Items</th>
+              <th class="text-end">Manage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr>
+              <td>{{ order.id or order['id'] }}</td>
+              <td>
+                {% if order.customer %}
+                  {% if order.customer.name %}<div><strong>{{ order.customer.name }}</strong></div>{% endif %}
+                  {% if order.customer.email %}<div class="text-muted-small">{{ order.customer.email }}</div>{% endif %}
+                {% else %}
+                  <div class="text-muted-small">—</div>
+                {% endif %}
+              </td>
+              <td>₹{{ order.total or order['total'] }}</td>
+              <td>{{ order.created_at or order.get('created_at', '') }}</td>
+              <td style="min-width:160px;">
+                <form method="post" action="{{ url_for('update_order_status', order_id=order.id or order['id']) }}" class="d-flex gap-2">
+                  {% set statuses = order_statuses if order_statuses is defined else ['ordered','paid','dispatched','cancelled'] %}
+                  {% set current = order.status or order.get('status', 'ordered') %}
+                  <select name="status" class="form-select form-select-sm">
+                    {% for s in statuses %}
+                      <option value="{{ s }}" {% if current == s %}selected{% endif %}>{{ s|capitalize }}</option>
+                    {% endfor %}
+                  </select>
+                  <button class="btn btn-sm btn-outline-primary">Update</button>
+                </form>
+              </td>
+              <td>
+                <ul class="mb-0 ps-3 small">
+                  {% set order_items = order['items'] if order.get('items') is not none else [] %}
+                  {% for it in order_items %}
+                    <li>{{ it.name or it['name'] }} × {{ it.quantity or it.get('quantity', 1) }}{% if it.size or it.get('size') %} ({{ it.size or it.get('size') }}){% endif %}</li>
+                  {% else %}
+                    <li class="text-muted-small">No items</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td class="text-end">
+                <a href="{{ url_for('order_detail', order_id=order.id or order['id']) }}" class="btn btn-sm btn-info me-1">View</a>
+                <form method="post" action="{{ url_for('delete_order', order_id=order.id or order['id']) }}" style="display:inline;" onsubmit="return confirm('Delete this order?');">
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted">No recent orders.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

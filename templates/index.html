@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% block title %}Shop - Home{% endblock %}
+
+{% block content %}
+<style>
+  :root{
+    --ice:#6f8b95;
+    --ice-dark:#46595f;
+    --muted:#9fb0b7;
+    --tile-bg:#a9bcc2;
+    --accent:#cfe6ee;
+  }
+
+  /* container spacing */
+  .page-wrap { padding: 18px; max-width:1200px; margin:0 auto; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(180deg, rgba(10,20,25,0.55), rgba(10,20,25,0.7)), url("{{ url_for('static', filename='images/FRZN_PUFFER_ECOM_WEB_DESIGN.jpg') }}") center/cover no-repeat;
+    color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 18px;
+  }
+  .hero-grid { display:grid; grid-template-columns: 1fr 320px; gap:20px; align-items:start; }
+
+  /* Left hero main */
+  .hero-main { display:flex; gap:16px; align-items:center; }
+  .hero-main img {
+    width:420px; max-width:40vw; height:420px; object-fit:cover; border-radius:8px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+  }
+  .hero-meta { min-width:220px; }
+  .hero-meta h1 { font-weight:800; font-size:36px; margin:4px 0; line-height:1.02; }
+  .hero-meta .muted { color:var(--accent); font-weight:600; letter-spacing:0.6px; }
+
+  /* compact price / actions */
+  .price-box { margin-top:12px; display:inline-block; background:rgba(255,255,255,0.04); padding:10px 12px; border-radius:8px; }
+  .hero-form { margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+  /* right thumbnails -> horizontal scroller on small devices */
+  .thumbnails { display:flex; flex-direction:column; gap:12px; }
+  .thumb { background:rgba(255,255,255,0.03); padding:8px; border-radius:8px; box-shadow: 0 6px 18px rgba(0,0,0,0.35); }
+  .thumb img { width:100%; height:120px; object-fit:cover; border-radius:6px; }
+
+  /* NEW COLLECTION tiles */
+  .section { margin-top:20px; }
+  .section-title { font-size:22px; font-weight:800; color:var(--ice-dark); margin-bottom:8px; }
+  .tiles { display:grid; grid-template-columns: repeat(4, 1fr); gap:16px; }
+
+  .tile {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    padding:10px; border-radius:10px; box-shadow: 0 8px 18px rgba(9,20,26,0.35);
+    color:#fff; display:flex; flex-direction:column; justify-content:space-between; min-height:300px;
+  }
+  .tile .img-wrap { background:var(--tile-bg); border-radius:8px; padding:8px; }
+  .tile img { width:100%; height:180px; object-fit:cover; border-radius:6px; }
+
+  /* promo */
+  .promo {
+    margin-top:20px; background: url("{{ url_for('static', filename='images/FRZN_PUFFER_ECOM_WEB_DESIGN.jpg') }}") center/cover no-repeat;
+    border-radius:8px; padding:28px; color:#fff; position:relative; overflow:hidden;
+  }
+  .promo::after{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(8,20,28,0.45), rgba(8,20,28,0.8)); border-radius:8px; }
+  .promo .promo-content { position:relative; z-index:2; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+
+  /* Buttons & inputs touch-friendly */
+  .btn, .form-control, .form-select { min-height:44px; border-radius:8px; font-size:15px; }
+  .btn-sm { min-height:40px; }
+
+  /* mobile-first improvements */
+  @media (max-width: 1000px){
+    .hero-main img{ width:320px; height:320px; object-fit:cover; }
+    .hero-grid{ grid-template-columns: 1fr 260px; }
+    .tiles { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 767px){
+    /* stack hero vertically and enlarge hero image */
+    .hero-grid{ grid-template-columns: 1fr; }
+    .hero-main { flex-direction:column; align-items:center; text-align:center; }
+    .hero-main img { width:100%; height:320px; max-height:360px; object-fit:cover; }
+    .hero-meta{ min-width:0; }
+    .price-box { display:block; margin:8px auto 0; }
+
+    /* thumbnails become horizontal scroller */
+    .thumbnails { flex-direction:row; gap:10px; overflow-x:auto; padding-bottom:6px; -webkit-overflow-scrolling:touch; }
+    .thumb { min-width:120px; flex:0 0 120px; }
+    .thumb img{ height:96px; }
+
+    /* tiles: 2 columns on phones, 1 column on very small */
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    .tile img { height:140px; }
+
+    .hero-form { justify-content:center; }
+    .hero-form .form-control { min-width:120px; width:100%; }
+    .hero-form > .col-auto { width:100%; }
+
+    .promo { padding:20px; }
+    .promo h2 { font-size:20px; }
+  }
+
+  @media (max-width: 420px){
+    .tiles { grid-template-columns: 1fr; gap:12px; }
+    .hero-main img{ height:260px; }
+    .btn, .form-control, .form-select { min-height:48px; font-size:16px; }
+  }
+</style>
+
+<div class="page-wrap">
+  <div class="hero mb-3">
+    <div class="hero-grid">
+      <!-- LEFT: big hero area -->
+      <div>
+        <div class="hero-main">
+          <!-- product image (featured) -->
+          {% if items and items|length > 0 and items[0].image %}
+          <img src="{{ url_for('static', filename='uploads/' ~ items[0].image) }}" alt="{{ items[0].name }}" loading="lazy">
+          {% else %}
+          <img src="{{ url_for('static', filename='images/placeholder-hero.jpg') }}" alt="hero" loading="lazy">
+          {% endif %}
+
+          <div class="hero-meta">
+            <div class="muted">COLLECTION</div>
+            <h1>ARTIC 01<span style="font-weight:600; font-size:16px;">™</span></h1>
+            <p class="muted">Engineered for extreme cold — glossy insulated shell, ultralight fill.</p>
+
+            <div class="price-box mt-2">
+              <div style="font-size:18px; font-weight:800;">${{ items[0].price if items and items|length>0 else '899.99' }}</div>
+              <div style="font-size:12px; color:rgba(255,255,255,0.8);">Add to cart • Free returns</div>
+            </div>
+
+            <!-- compact search/form (stack on mobile) -->
+            <form class="hero-form mt-3" method="get">
+              <div style="flex:1; min-width:160px;">
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent text-white"><i class="bi bi-search"></i></span>
+                  <input name="q" value="{{ q }}" placeholder="Search items..." class="form-control">
+                </div>
+              </div>
+
+              <div style="flex:1; min-width:140px;">
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent text-white"><i class="bi bi-tags"></i></span>
+                  <input name="category" value="{{ category }}" placeholder="Category" class="form-control">
+                </div>
+              </div>
+
+              <div style="min-width:110px;">
+                <button class="btn btn-primary w-100">Search</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: thumbnails / quick actions -->
+      <div class="thumbnails">
+        <div class="thumb">
+          {% if items and items|length > 1 and items[1].image %}
+            <img src="{{ url_for('static', filename='uploads/' ~ items[1].image) }}" alt="thumb1" loading="lazy">
+          {% else %}
+            <img src="{{ url_for('static', filename='images/placeholder-thumb.jpg') }}" alt="thumb" loading="lazy">
+          {% endif %}
+        </div>
+        <div class="thumb">
+          {% if items and items|length > 2 and items[2].image %}
+            <img src="{{ url_for('static', filename='uploads/' ~ items[2].image) }}" alt="thumb2" loading="lazy">
+          {% else %}
+            <img src="{{ url_for('static', filename='images/placeholder-thumb.jpg') }}" alt="thumb" loading="lazy">
+          {% endif %}
+        </div>
+
+        <div style="margin-top:auto; display:flex; gap:8px; align-items:center; justify-content:flex-end;">
+          <a class="btn btn-light btn-sm" href="?filters=1">Filters</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW COLLECTION -->
+  <div class="section">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <div>
+        <div class="section-title">NEW COLLECTION</div>
+        <div class="text-muted small" style="color:var(--muted);">Fresh arrivals — insulated, reflective, limited edition</div>
+      </div>
+      <div class="d-none d-sm-block">
+        <a class="btn btn-sm btn-outline-secondary" href="?sort=new">Newest</a>
+      </div>
+    </div>
+
+    <div class="tiles">
+      {% for it in items %}
+      <div class="tile">
+        <div>
+          <div class="img-wrap">
+            {% if it.image %}
+            <img src="{{ url_for('static', filename='uploads/' ~ it.image) }}" alt="{{ it.name }}" loading="lazy">
+            {% else %}
+            <img src="{{ url_for('static', filename='images/placeholder-card.jpg') }}" alt="product" loading="lazy">
+            {% endif %}
+          </div>
+          <h6 style="margin-top:10px;">{{ it.name }}</h6>
+          <div class="meta" style="color:var(--muted); font-size:13px;">{{ it.description|truncate(70) }}</div>
+        </div>
+
+        <div style="margin-top:8px;">
+          <div class="d-flex justify-content-between align-items-center gap-2">
+            <div class="fw-bold">${{ it.price }}</div>
+            <div style="display:flex; gap:6px;">
+              <a class="btn btn-sm btn-outline-light" href="#">Details</a>
+
+              <form class="d-inline" method="post" action="{{ url_for('add_to_cart') }}">
+                <input type="hidden" name="item_id" value="{{ it.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button class="btn btn-sm btn-success">Add</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-12">
+        <p>No items found.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Promo / Mountain section -->
+  <div class="promo mt-3">
+    <div class="promo-content">
+      <div>
+        <h2 style="margin:0; font-size:26px; font-weight:900;">BUILT FOR COLD<br><small style="font-weight:700;">MADE FOR HEIGHT — FORGED TO LAST</small></h2>
+        <p class="small" style="color:var(--accent); margin-top:6px;">For those who climb. Not for the crowd.</p>
+      </div>
+      <div style="text-align:right;">
+        <p class="small mb-2">Limited run • </p>
+        <p class="small mb-1"> stay connected </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+        
+  <!-- Social links -->
+  <div class="section mt-4">
+    <div class="d-flex justify-content-center gap-2">
+      <a class="btn btn-outline-dark d-flex align-items-center" href="https://instagram.com/" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-instagram me-2" viewBox="0 0 16 16"><path d="M8 5.5a2.5 2.5 0 1 0 0 5.001A2.5 2.5 0 0 0 8 5.5z"/><path d="M12.5 1h-9A2.5 2.5 0 0 0 1 3.5v9A2.5 2.5 0 0 0 3.5 15h9a2.5 2.5 0 0 0 2.5-2.5v-9A2.5 2.5 0 0 0 12.5 1zm1.5 11.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 1 12.5v-9A1.5 1.5 0 0 1 2.5 2h9A1.5 1.5 0 0 1 13 3.5v9z"/></svg>
+        Instagram
+      </a>
+
+      <a class="btn btn-outline-primary d-flex align-items-center" href="https://twitter.com/" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-twitter me-2" viewBox="0 0 16 16"><path d="M5 15c6 0 9.3-5 9.3-9.3v-.4A6.6 6.6 0 0 0 16 2.5a6.4 6.4 0 0 1-1.9.5 3.3 3.3 0 0 0 1.4-1.8 6.6 6.6 0 0 1-2.1.8 3.3 3.3 0 0 0-5.6 3 9.4 9.4 0 0 1-6.8-3.4 3.3 3.3 0 0 0 1 4.4 3.3 3.3 0 0 1-1.5-.4v.04a3.3 3.3 0 0 0 2.6 3.2 3.3 3.3 0 0 1-.9.1c-.2 0-.5 0-.7-.06A3.3 3.3 0 0 0 5 13.5a6.6 6.6 0 0 1-4.1 1.4c-.3 0-.6 0-.9-.05A9.4 9.4 0 0 0 5 15"/></svg>
+        Twitter
+      </a>
+
+      <a class="btn btn-outline-info d-flex align-items-center" href="https://linkedin.com/" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-linkedin me-2" viewBox="0 0 16 16"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zM4.943 6.569H3.057V12h1.886V6.569zM3.999 5.449c-.603 0-1.091-.49-1.091-1.094 0-.604.488-1.094 1.091-1.094.603 0 1.091.49 1.091 1.094 0 .604-.488 1.094-1.091 1.094zM12.943 12h-1.887v-2.6c0-.62-.012-1.417-.863-1.417-.864 0-.996.675-1.023 1.372V12h-1.887V6.569h1.811v.744h.026c.252-.477.868-1.0 1.786-1.0 1.91 0 2.263 1.258 2.263 2.893V12z"/></svg>
+        LinkedIn
+      </a>
+
+      <a class="btn btn-outline-primary d-flex align-items-center" href="https://facebook.com/" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-facebook me-2" viewBox="0 0 16 16"><path d="M8.94 8.5H7.7v6H5.82v-6H4.74V7.04h1.08V6.17c0-.96.53-2.55 2.55-2.55h1.87v1.46H9.9c-.4 0-.96.2-.96.99v.97h2.03L12 8.5H9.94z"/></svg>
+        Facebook
+      </a>
+    </div>
+  </div>
+
+{% endblock %}

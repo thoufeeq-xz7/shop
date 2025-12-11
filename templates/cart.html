@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <h3 class="mb-4">Shopping Cart</h3>
+  </div>
+  {% if not cart %}
+  <div class="col-12">
+    <div class="alert alert-info">Your cart is empty. <a href="{{ url_for('index') }}">Continue shopping</a>.</div>
+  </div>
+  {% else %}
+  <div class="col-lg-8">
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Size</th>
+            <th>Price</th>
+            <th style="width:150px;">Quantity</th>
+            <th>Subtotal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                {% if item.image %}
+                <img src="{{ url_for('static', filename='uploads/' ~ item.image) }}" style="width:60px; height:60px; object-fit:cover;" alt="{{ item.name }}">
+                {% endif %}
+                <div>
+                  <strong>{{ item.name }}</strong>
+                </div>
+              </div>
+            </td>
+            <td>
+              {{ item.size or '—' }}
+              {% if item.available_sizes %}
+              <div class="text-muted-small">Options: {{ item.available_sizes|join(', ') }}</div>
+              {% endif %}
+            </td>
+            <td>₹{{ '%.2f'|format(item.price|float) }}</td>
+            <td>
+              <form method="post" action="{{ url_for('update_cart_item') }}" class="d-flex flex-column gap-2">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <input type="hidden" name="current_size" value="{{ item.size }}">
+                {% if item.available_sizes %}
+                <select class="form-select form-select-sm" name="size">
+                  {% for size in item.available_sizes %}
+                  <option value="{{ size }}" {% if size == item.size %}selected{% endif %}>{{ size }}</option>
+                  {% endfor %}
+                </select>
+                {% else %}
+                <input type="hidden" name="size" value="{{ item.size }}">
+                {% endif %}
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text">Qty</span>
+                  <input type="number" class="form-control form-control-sm" min="1" name="quantity" value="{{ item.quantity }}">
+                </div>
+                <button class="btn btn-outline-secondary btn-sm">Update</button>
+              </form>
+            </td>
+            <td>₹{{ '%.2f'|format(item.price|float * item.quantity) }}</td>
+            <td>
+              <form method="post" action="{{ url_for('remove_cart_item') }}">
+                <input type="hidden" name="item_id" value="{{ item.id }}">
+                <input type="hidden" name="size" value="{{ item.size }}">
+                <button class="btn btn-link text-danger p-0">Remove</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="admin-panel">
+      <h5>Summary</h5>
+      <p class="d-flex justify-content-between">
+        <span>Items</span>
+        <strong>{{ summary.count }}</strong>
+      </p>
+      <p class="d-flex justify-content-between">
+        <span>Total</span>
+        <strong>₹{{ '%.2f'|format(summary.total) }}</strong>
+      </p>
+      <div class="d-grid gap-2">
+        <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Continue Shopping</a>
+        <a class="btn btn-primary" href="{{ url_for('checkout') }}">Proceed to Checkout</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,31 @@
+[
+  {
+    "id": "d0321490",
+    "customer": {
+      "name": "adamjhon",
+      "email": "adamjohn32@gmail.com",
+      "phone": "987650912",
+      "address": "home address,distric,state,country ,pin ******",
+      "notes": "special birthday purchase"
+    },
+    "items": [
+      {
+        "available_sizes": [
+          "xl",
+          "xxl",
+          "m",
+          "s"
+        ],
+        "id": "9677c662",
+        "image": "bf9bc68363bb468aae3773cf17a9a96d_Screenshot_2025-10-25_122748.png",
+        "name": "t shirt",
+        "price": "490.00",
+        "quantity": 1,
+        "size": "xl"
+      }
+    ],
+    "total": "490.00",
+    "created_at": "2025-12-11T13:34:53Z",
+    "status": "ordered"
+  }
+]
